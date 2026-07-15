@@ -3,5 +3,5 @@ Backend API menggunakan
 - FastAPI
 - Python
 - MySQL
-Status
-🚧 Development
+
+Status 🚧 Development

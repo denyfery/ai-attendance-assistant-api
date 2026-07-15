@@ -63,6 +63,3 @@ class EmployeeService:
             status_code=404,
             detail="Employee not found"
         )
-
-def get_employee_service():
-    return EmployeeService()
