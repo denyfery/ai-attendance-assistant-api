@@ -1,11 +1,10 @@
 from fastapi import APIRouter
 from fastapi import Depends
 
+from app.schemas.employee_schema import EmployeeResponse, MessageResponse
 from app.schemas.employee_schema import EmployeeCreate
 from app.schemas.employee_schema import EmployeeUpdate
-
 from app.services.employee_service import EmployeeService
-
 from app.dependencies.employee_dependency import get_employee_service
 
 router = APIRouter(
@@ -13,27 +12,33 @@ router = APIRouter(
     tags=["Employees"]
 )
 
-@router.get("/")
+# @router.get("/")
+# def get_all(
+#     service: EmployeeService = Depends(get_employee_service)
+# ):
+#     return service.get_all()
+
+@router.get("/", response_model=list[EmployeeResponse])
 def get_all(
     service: EmployeeService = Depends(get_employee_service)
 ):
     return service.get_all()
 
-@router.get("/{employee_id}")
+@router.get("/{employee_id}", response_model=EmployeeResponse)
 def get_employee(
     employee_id: int,
     service: EmployeeService = Depends(get_employee_service)
 ):
     return service.get_employee(employee_id)
 
-@router.post("/")
+@router.post("/", response_model=EmployeeResponse)
 def create_employee(
     employee: EmployeeCreate,
     service: EmployeeService = Depends(get_employee_service)
 ):
     return service.create(employee)
 
-@router.put("/{employee_id}")
+@router.put("/{employee_id}", response_model=EmployeeResponse)
 def update_employee(
     employee_id: int,
     employee: EmployeeUpdate,
@@ -41,7 +46,7 @@ def update_employee(
 ):
     return service.update(employee_id, employee)
 
-@router.delete("/{employee_id}")
+@router.delete("/{employee_id}", response_model=MessageResponse)
 def delete_employee(
     employee_id: int,
     service: EmployeeService = Depends(get_employee_service)
