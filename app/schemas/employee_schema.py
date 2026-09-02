@@ -1,31 +1,56 @@
 from decimal import Decimal
-from pydantic import BaseModel, Field
-from typing import Optional
+from pydantic import BaseModel, ConfigDict, field_validator
+from typing import Generic, TypeVar
 
-class Employee(BaseModel):
-    id: int
-    name: str
-    department: str
-    salary:Decimal
+T = TypeVar("T")
 
 class EmployeeCreate(BaseModel):
     name: str
     department: str
     salary: Decimal
+    phone_number: str | None = None
 
 class EmployeeUpdate(BaseModel):
-    name: Optional[str] = None
-    department: Optional[str] = None
-    salary: Optional[Decimal] = None
+    name: str | None = None
+    department: str | None = None
+    salary: Decimal | None = None
+    phone_number: str | None = None
 
-class EmployeeDelete(BaseModel):
-    id: int
 
 class EmployeeResponse(BaseModel):
+    model_config = ConfigDict(
+        from_attributes=True
+    )
+
     id: int
     name: str
     department: str
-    salary:Decimal = Field(..., max_digits=15, decimal_places=2)
+    salary: Decimal
+    phone_number: str | None = None
+
+    @field_validator("department", mode="before")
+    @classmethod
+    def serialize_department(cls, value):
+        if hasattr(value, "name"):
+            return value.name
+
+        return value
+
 
 class MessageResponse(BaseModel):
     message: str
+
+
+class PaginationResponse(
+    BaseModel,
+    Generic[T]
+):
+    data: list[T]
+    next_cursor: int | None = None
+    has_more: bool
+
+
+class EmployeePaginationResponse(
+    PaginationResponse[EmployeeResponse]
+):
+    pass
